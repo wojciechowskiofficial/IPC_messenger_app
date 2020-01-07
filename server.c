@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
-#include "structs.c"
+#include "functions.h"
+#include "structs.h"
 
 int main() {
-	printf("hello on the server side");
+	User users[256];
+	load_users(users);
 	return 0;
 }

@@ -1,3 +1,5 @@
+#ifndef STRUCTS_H
+#define STRUCTS_H
 struct User {
 	int id;
 	char login[256];
@@ -5,3 +7,4 @@ struct User {
 };
 
 typedef struct User User;
+#endif

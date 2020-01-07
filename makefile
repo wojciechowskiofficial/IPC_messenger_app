@@ -1,4 +1,7 @@
-all: server.o
+all: server.o 
 	gcc server.o -o app
-server.o: server.c structs.c
-	gcc -c server.c structs.c
+	./app
+server.o: server.c functions.h structs.h
+	gcc -c server.c 
+clean:
+	rm -f *.gch *.o app
