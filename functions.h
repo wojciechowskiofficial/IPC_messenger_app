@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/msg.h>
+#include <sys/ipc.h>
 
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
@@ -53,4 +56,5 @@ void load_groups(Group * groups) {
 		check_semi(in);
 	}
 }
+
 #endif

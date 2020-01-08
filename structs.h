@@ -1,3 +1,7 @@
+#include <string.h>
+
+#define max_message_size 1024
+
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
@@ -19,4 +23,11 @@ struct Group {
 };
 
 typedef struct Group Group;
+
+struct Dm {
+	long type;
+	char text[max_message_size];
+};
+
+typedef struct Dm Dm;
 #endif
