@@ -4,4 +4,4 @@ all: server.o
 server.o: server.c functions.h structs.h
 	gcc -c server.c 
 clean:
-	rm -f *.gch *.o app
+	rm -f *.gch *.o app a.out
