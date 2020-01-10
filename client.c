@@ -40,6 +40,9 @@ int main() {
 			else if (!strcmp(interact, "help")) {
 				present_options();
 			}
+			else if (!strcmp(interact, "logout")) {
+				req_logout(login, password);	
+			}
 			else if (!strcmp(interact, "")) {
 
 			}

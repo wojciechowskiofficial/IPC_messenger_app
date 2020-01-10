@@ -63,7 +63,6 @@ int load_groups(Group * groups) {
 
 void handle_login(User * users, int user_nr) {
 	Req req;
-	int dump;
 	int local_request_queue = msgget(0x100, 0600);
 	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 2, IPC_NOWAIT);
 	if (receive_code != -1) {
@@ -93,8 +92,35 @@ void handle_login(User * users, int user_nr) {
 	}
 }
 
-void handle_logout() {
-
+void handle_logout(User * users, int user_nr) {
+	Req req;
+	int local_request_queue = msgget(0x100, 0600);
+	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 4, IPC_NOWAIT);
+	if (receive_code != -1) {
+		Resp resp;
+		resp.type = 3;
+		resp.code = 1;
+		for (int i = 0; i < user_nr; i++) {
+			if (!strcmp(users[i].login, req.login) &&
+			    !strcmp(users[i].password, req.password) &&
+			    users[i].is_logged) {
+				resp.code = 0;
+				users[i].is_logged = 0;
+				printf("!@#$%^&*\n");
+				printf("logout successful\n");
+				printf("login: %s\n", req.login);
+				printf("password: %s\n\n", req.password);
+				break;
+			}
+		}
+		if (resp.code != 0) {
+				printf("!@#$%^&*\n");
+				printf("logout failed\n");
+				printf("login: %s\n", req.login);
+				printf("password: %s\n\n", req.password);
+		}
+		msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
+	}
 }
 
 #endif

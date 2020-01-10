@@ -23,6 +23,7 @@ int main() {
 
 	while (1) {
 		handle_login(users, user_nr);
+		handle_logout(users, user_nr);
 		sleep(1);
 	}
 
