@@ -5,14 +5,21 @@
 #include <sys/msg.h>
 #include <sys/ipc.h>
 
-#include "functions.h"
 #include "structs.h"
+#include "funct_client.h"
+
+int id;
+char login[256];
+char password[256];
 
 int main() {
-	int send_queue = msgget(0x123, 0600);
-	Dm dm;
-	dm.type = 1;
-	strcpy(dm.text, "jajko");
-	msgsnd(send_queue, &dm, 6, 0);
+	printf("welcome to the lowest level chat the world has ever got addicted to!!!\n");
+	printf("please login\n");
+	printf("login: ");
+	scanf("%s", login);
+	printf("password: ");
+	scanf("%s", password);
+	printf("\n");
+	req_login(login, password);
 	return 0;
 }

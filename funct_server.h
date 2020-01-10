@@ -19,7 +19,7 @@ void check_semi(FILE * in) {
 	}
 }
 
-void load_users(User * users) {
+int load_users(User * users) {
 	FILE * in;
 	in = fopen("init.txt", "r");
 	int user_nr;
@@ -32,9 +32,10 @@ void load_users(User * users) {
 		check_semi(in);
 	}
 	fclose(in);
+	return user_nr;
 }
 
-void load_groups(Group * groups) {
+int load_groups(Group * groups) {
 	FILE * in;
 	in = fopen("init.txt", "r");
 	int user_nr, group_nr;
@@ -54,6 +55,32 @@ void load_groups(Group * groups) {
 		}
 		groups[i].end_ptr = members_nr - 1;
 		check_semi(in);
+	}
+	fclose(in);
+	return group_nr;
+}
+
+void handle_login(User * users, int user_nr) {
+	Login_req req;
+	int dump;
+	int local_request_queue = msgget(0x100, 0600);
+	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 2, 0);
+	if (receive_code != -1) {
+		Server_resp resp;
+		resp.type = 1;
+		resp.code = 1;
+		for (int i = 0; i < user_nr; i++) {
+			if (!strcmp(users[i].login, req.login) &&
+			    !strcmp(users[i].password, req.password)) {
+				resp.code = 0;
+				printf("!@#$%^&*\n");
+				printf("login request successful\n");
+				printf("login: %s\n", req.login);
+				printf("password: %s\n", req.password);
+				break;
+			}
+		}
+		msgsnd(local_request_queue, &resp, sizeof(Server_resp) - sizeof(long), 0);
 	}
 }
 
