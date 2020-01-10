@@ -62,12 +62,12 @@ int load_groups(Group * groups) {
 }
 
 void handle_login(User * users, int user_nr) {
-	Login_req req;
+	Req req;
 	int dump;
 	int local_request_queue = msgget(0x100, 0600);
 	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 2, IPC_NOWAIT);
 	if (receive_code != -1) {
-		Server_resp resp;
+		Resp resp;
 		resp.type = 1;
 		resp.code = 1;
 		for (int i = 0; i < user_nr; i++) {
@@ -89,7 +89,7 @@ void handle_login(User * users, int user_nr) {
 				printf("login: %s\n", req.login);
 				printf("password: %s\n\n", req.password);
 		}
-		msgsnd(local_request_queue, &resp, sizeof(Server_resp) - sizeof(long), 0);
+		msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
 	}
 }
 

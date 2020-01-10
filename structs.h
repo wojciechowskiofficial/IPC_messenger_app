@@ -26,21 +26,21 @@ struct Group {
 typedef struct Group Group;
 
 //type: 1
-struct Server_resp {
+struct Resp {
 	long type;
 	int code;
 };
 
-typedef struct Server_resp Server_resp;
+typedef struct Resp Resp;
 
 //type: 2
-struct Login_req {
+struct Req {
 	long type;
 	char login[256];
 	char password[256];
 };
 
-typedef struct Login_req Login_req;
+typedef struct Req Req;
 
 //type: 3
 struct Dm {
