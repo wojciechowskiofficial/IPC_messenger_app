@@ -72,18 +72,29 @@ void handle_login(User * users, int user_nr) {
 		resp.code = 1;
 		for (int i = 0; i < user_nr; i++) {
 			if (!strcmp(users[i].login, req.login) &&
-			    !strcmp(users[i].password, req.password)) {
+			    !strcmp(users[i].password, req.password) &&
+			    !users[i].is_logged) {
 				resp.code = 0;
 				users[i].is_logged = 1;
 				printf("!@#$%^&*\n");
-				printf("login request successful\n");
+				printf("login successful\n");
 				printf("login: %s\n", req.login);
-				printf("password: %s\n", req.password);
+				printf("password: %s\n\n", req.password);
 				break;
 			}
 		}
+		if (resp.code != 0) {
+				printf("!@#$%^&*\n");
+				printf("login failed\n");
+				printf("login: %s\n", req.login);
+				printf("password: %s\n\n", req.password);
+		}
 		msgsnd(local_request_queue, &resp, sizeof(Server_resp) - sizeof(long), 0);
 	}
+}
+
+void handle_logout() {
+
 }
 
 #endif

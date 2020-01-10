@@ -20,6 +20,33 @@ int main() {
 	printf("password: ");
 	scanf("%s", password);
 	printf("\n");
+
 	req_login(login, password);
+	
+	char interact[1024];
+	int is_dming = 0;
+
+	present_options();
+
+	while (1) {
+		scanf("%s", interact);
+		//entering command mode
+		if (!strcmp(interact, "$")) {
+			printf("COMMAND MODE\n\n");
+			scanf("%s", interact);
+			if (!strcmp(interact, "quit")) {
+				//do nothing
+			}
+			else if (!strcmp(interact, "help")) {
+				present_options();
+			}
+			else if (!strcmp(interact, "")) {
+
+			}
+			else {
+				printf("unrecognised command\n\n");
+			}
+		}
+	}
 	return 0;
 }
