@@ -26,6 +26,7 @@ int load_users(User * users) {
 	fscanf(in, "%d", &user_nr);
 	check_semi(in);
 	for (int i = 0; i < user_nr; i++) {
+		users[i].is_logged = 0;
 		fscanf(in, "%d", &users[i].id);
 		fscanf(in, "%s", &users[i].login);
 		fscanf(in, "%s", &users[i].password);
@@ -64,7 +65,7 @@ void handle_login(User * users, int user_nr) {
 	Login_req req;
 	int dump;
 	int local_request_queue = msgget(0x100, 0600);
-	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 2, 0);
+	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 2, IPC_NOWAIT);
 	if (receive_code != -1) {
 		Server_resp resp;
 		resp.type = 1;
@@ -73,6 +74,7 @@ void handle_login(User * users, int user_nr) {
 			if (!strcmp(users[i].login, req.login) &&
 			    !strcmp(users[i].password, req.password)) {
 				resp.code = 0;
+				users[i].is_logged = 1;
 				printf("!@#$%^&*\n");
 				printf("login request successful\n");
 				printf("login: %s\n", req.login);

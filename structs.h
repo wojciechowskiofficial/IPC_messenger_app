@@ -9,6 +9,7 @@ struct User {
 	int id;
 	char login[256];
 	char password[256];
+	int is_logged;
 };
 
 typedef struct User User;
