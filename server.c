@@ -6,6 +6,9 @@
 #include <sys/ipc.h>
 #include <signal.h>
 
+int request_queue, receive_queue, send_queue;
+int queues[3];
+
 #include "funct_server.h"
 #include "structs.h"
 
@@ -18,9 +21,13 @@ int main() {
 	user_nr = load_users(users);
 	group_nr = load_groups(groups);
 
-	int request_queue = msgget(0x100, 0600 | IPC_CREAT);
-	int receive_queue = msgget(0x101, 0600 | IPC_CREAT);
-	int send_queue = msgget(0x102, 0600 | IPC_CREAT);
+	request_queue = msgget(0x100, 0600 | IPC_CREAT);
+	receive_queue = msgget(0x101, 0600 | IPC_CREAT);
+	send_queue = msgget(0x102, 0600 | IPC_CREAT);
+	queues[0] = request_queue;
+	queues[1] = receive_queue;
+	queues[2] = send_queue;
+	signal(2, catch_sigint);
 
 	while (1) {
 		handle_login(users, user_nr);

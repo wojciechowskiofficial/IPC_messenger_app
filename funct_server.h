@@ -10,6 +10,13 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+void catch_sigint(int sig) {
+	for (int i = 0; i < 3; i++) {
+		msgctl(queues[i], IPC_RMID, NULL);
+	}
+	exit(EXIT_SUCCESS);
+}
+
 void check_semi(FILE * in) {
 	char semi[1];
 	fscanf(in, "%s", semi);
