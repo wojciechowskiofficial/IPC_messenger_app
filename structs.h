@@ -28,6 +28,8 @@ typedef struct Group Group;
 //type: 1
 struct Resp {
 	long type;
+	char strings[16][256];
+	int ints[16];
 	int code;
 };
 

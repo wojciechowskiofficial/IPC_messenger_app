@@ -38,7 +38,8 @@ void present_options() {
 	printf("$ + *enter* + help + *enter*\tprint help\n");
 	printf("$ + *enter* + quit + *enter*\tquit command mode\n");
 	printf("$ + *enter* + logout + *enter*\tlogout\n");
-	printf("$ + *enter* + dm + *enter*\tenter dming mode\n\n");
+	printf("$ + *enter* + dm + *enter*\tenter dming mode\n");
+	printf("$ + *enter* + request_logged + *enter*\n\n");
 }
 
 void req_logout(char * login, char * password) {
@@ -62,6 +63,27 @@ void req_logout(char * login, char * password) {
 		printf("logout failed, deal with it\n");
 		exit(-1);
 	}
+}
+
+void req_logged(char * login, char * password) {
+	int mid = msgget(0x100, 0);
+
+	Req req;
+	req.type = 6;
+	strcpy(req.login, login);
+	strcpy(req.password, password);
+	
+	msgsnd(mid, &req, sizeof(req) - sizeof(long), 0);
+	sleep(1);
+
+	Resp resp;
+	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 5, 0);
+
+	printf("logged users:\n");
+	for (int i = 0; i < resp.ints[0]; i++) {
+		printf("%s\n", resp.strings[i]);
+	}
+	printf("\n");
 }
 
 #endif

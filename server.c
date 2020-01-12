@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/msg.h>
 #include <sys/ipc.h>
+#include <signal.h>
 
 #include "funct_server.h"
 #include "structs.h"
@@ -24,7 +25,7 @@ int main() {
 	while (1) {
 		handle_login(users, user_nr);
 		handle_logout(users, user_nr);
-		sleep(1);
+		handle_req_logged(users, user_nr);
 	}
 
 	return 0;

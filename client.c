@@ -43,6 +43,9 @@ int main() {
 			else if (!strcmp(interact, "logout")) {
 				req_logout(login, password);	
 			}
+			else if (!strcmp(interact, "request_logged")) {
+				req_logged(login, password);
+			}
 			else if (!strcmp(interact, "")) {
 
 			}

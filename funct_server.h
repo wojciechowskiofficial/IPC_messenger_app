@@ -123,4 +123,27 @@ void handle_logout(User * users, int user_nr) {
 	}
 }
 
+void handle_req_logged(User * users, int user_nr) {
+	Req req;
+	int local_request_queue = msgget(0x100, 0600);
+	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 6, IPC_NOWAIT);
+	if (receive_code != -1) {
+		Resp resp;
+		resp.type = 5;
+		resp.code = 1;
+		int iter = 0;
+		for (int i = 0; i < user_nr; i++) {
+			if (users[i].is_logged) {
+				strcpy(resp.strings[iter++], users[i].login);
+			}
+		}
+		resp.ints[0] = iter;
+		resp.code = 0;
+		printf("!@#$%^&*\n");
+		printf("logged req successful\n");
+		printf("login: %s\n", req.login);
+		printf("password: %s\n\n", req.password);
+	msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
+	}
+}
 #endif
