@@ -150,7 +150,71 @@ void handle_req_logged(User * users, int user_nr) {
 		printf("logged req successful\n");
 		printf("login: %s\n", req.login);
 		printf("password: %s\n\n", req.password);
-	msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
+		msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
+	}
+}
+
+int is_user_avaliable(User * users, int user_nr, char * nick) {
+	for (int i = 0; i < user_nr; i++) {
+		if (!strcmp(users[i].login, nick) &&
+		users[i].is_logged &&
+		!users[i].is_writing) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+int establish_logged_users_nr(User * users, int user_nr) {
+	int nr = 0;
+	for (int i = 0; i < user_nr; i++) {
+		if (users[i].is_logged) nr++;
+	}
+	return nr;
+}
+
+int who_is_that(User * users, int user_nr, char * nick) {
+	for (int i = 0; i < user_nr; i++) {
+		if (strcmp(users[i].login, nick)) return i;
+	}
+	return -1;
+}
+
+void handle_req_dm(User * users, int user_nr) {
+	Req req;
+	int local_request_queue = msgget(0x100, 0600);
+	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 8, IPC_NOWAIT);
+	Resp resp;
+	if (!req.wanna_dm) resp.code = -1;
+	if (receive_code != -1) {
+		resp.type = 7;
+		resp.code = 1;
+		int message_to_id = is_user_avaliable(users, user_nr, req.message_to);
+		if (message_to_id != -1) {
+			//defining pair of users that are going to dm
+			strcpy(resp.strings[0], req.login);
+			strcpy(resp.strings[1], users[message_to_id].login);
+			resp.code = 0;
+			//turning is_writing flag to 1 in both users
+			users[message_to_id].is_writing = 1;
+			users[who_is_that(users, user_nr, req.login)].is_writing = 1;
+			//establish logged users number
+			int nr = establish_logged_users_nr(users, user_nr);
+			printf("!@#$%^&*\n");
+			printf("dm req successful\n");
+			printf("login: %s\n", req.login);
+			printf("password: %s\n\n", req.password);
+			//send x messages where x is logged users number
+			for (int i = 0; i < nr; i++) {
+				msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
+			}
+		}
+		if (resp.code != 0) {
+			printf("!@#$%^&*\n");
+			printf("dm req failed\n");
+			printf("login: %s\n", req.login);
+			printf("password: %s\n\n", req.password);
+		}
 	}
 }
 #endif

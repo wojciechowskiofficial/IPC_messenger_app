@@ -10,6 +10,7 @@ struct User {
 	char login[256];
 	char password[256];
 	int is_logged;
+	int is_writing;
 };
 
 typedef struct User User;
@@ -25,7 +26,6 @@ struct Group {
 
 typedef struct Group Group;
 
-//type: 1
 struct Resp {
 	long type;
 	char strings[16][256];
@@ -35,16 +35,16 @@ struct Resp {
 
 typedef struct Resp Resp;
 
-//type: 2
 struct Req {
 	long type;
 	char login[256];
 	char password[256];
+	int wanna_dm, wanna_gm;
+	char message_to[256];
 };
 
 typedef struct Req Req;
 
-//type: 3
 struct Dm {
 	long type;
 	char text[max_message_size];

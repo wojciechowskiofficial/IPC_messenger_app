@@ -86,4 +86,22 @@ void req_logged(char * login, char * password) {
 	printf("\n");
 }
 
+void req_dm(char * login, char * password, char * message_to) {
+	int mid = msgget(0x100, 0);
+
+	Req req;
+	req.type = 8;
+	strcpy(req.login, login);
+	strcpy(req.password, password);
+	strcpy(req.message_to, message_to);
+	req.wanna_dm = 1;
+
+	msgsnd(mid, &req, sizeof(req) - sizeof(long), 0);
+	sleep(1);
+}
+
+void dm_mode() {
+	printf("were in dm mode\n");
+}
+
 #endif

@@ -33,6 +33,8 @@ int main() {
 		handle_login(users, user_nr);
 		handle_logout(users, user_nr);
 		handle_req_logged(users, user_nr);
+		handle_req_dm(users, user_nr);
+		sleep(1);
 	}
 
 	return 0;

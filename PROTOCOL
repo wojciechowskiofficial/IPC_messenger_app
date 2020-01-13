@@ -7,3 +7,5 @@ queue 0x100:
 	4: cli req logout
 	5: ser resp request_logged
 	6: cli req request_logged
+	7: ser resp request_dm
+	8: cli req request_dm

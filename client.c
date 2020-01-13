@@ -46,6 +46,12 @@ int main() {
 			else if (!strcmp(interact, "request_logged")) {
 				req_logged(login, password);
 			}
+			else if (!strcmp(interact, "dm")) {
+				printf("establish connection with: ");
+				char message_to[256];
+				scanf("%s", message_to);
+				req_dm(login, password, message_to);
+			}
 			else if (!strcmp(interact, "")) {
 
 			}
