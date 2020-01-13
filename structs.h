@@ -52,4 +52,13 @@ struct Dm {
 
 typedef struct Dm Dm;
 
+//Dm_list is a local servers data structure
+//not ment for ipc
+struct Dm_list {
+	char login_array[16][2][256];
+	int active_array[16];
+};
+
+typedef struct Dm_list Dm_list;
+
 #endif
