@@ -12,33 +12,6 @@ int queues[3];
 #include "funct_server.h"
 #include "structs.h"
 
-Dm_list ds;
-
-void dm_init() {
-	for (int i = 0; i < 16; i++) {
-		ds.active_array[i] = 0;
-	}
-}
-
-int dm_check_active(char * a, char * b) {
-	for (int i = 0; i < 16; i++) {
-		if ((!strcmp(a, ds.login_array[i][0]) || !strcmp(a, ds.login_array[i][1])) &&
-		     (!strcmp(b, ds.login_array[i][0]) || !strcmp(b, ds.login_array[i][1])) &&
-		     (ds.active_array[i] == 1)) return 1;
-	}
-	return 0;
-}
-
-void dm_activate(char * a, char * b) {
-	for (int i = 0; i < 16; i++) {
-		if (!ds.active_array[i]) {
-			ds.active_array[i] = 1;
-			strcpy(ds.login_array[i][0], a);
-			strcpy(ds.login_array[i][1], b);
-		}
-	}
-}
-
 int main() {
 	printf("server up\n");
 	User users[256];
@@ -63,6 +36,10 @@ int main() {
 		handle_logout(users, user_nr);
 		handle_req_logged(users, user_nr);
 		handle_req_dm(users, user_nr);
+		for (int i = 0; i < user_nr; i++) {
+			printf("%s %d %d\n", users[i].login, users[i].is_logged, users[i].is_writing);
+		}
+		printf("%s %s\n", ds.login_array[1][0], ds.login_array[1][1]);
 		sleep(1);
 	}
 

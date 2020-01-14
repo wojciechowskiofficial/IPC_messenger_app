@@ -96,6 +96,8 @@ void req_dm(char * login, char * password, char * message_to) {
 	strcpy(req.message_to, message_to);
 	req.wanna_dm = 1;
 
+	printf("%s\n", req.login);
+
 	msgsnd(mid, &req, sizeof(req) - sizeof(long), 0);
 	sleep(1);
 }
@@ -110,7 +112,9 @@ void handle_resp_dm(char * login, char * password) {
 	Resp resp;
 	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 7, IPC_NOWAIT);
 
-	printf("%d\n", resp.code);
+	if(resp.type == 7) {
+		printf("%s %s %d\n", resp.strings[0], resp.strings[1], resp.ints[0]);
+	}
 }
 
 #endif

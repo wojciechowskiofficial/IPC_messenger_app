@@ -17,6 +17,35 @@ void catch_sigint(int sig) {
 	exit(EXIT_SUCCESS);
 }
 
+Dm_list ds;
+
+void dm_init() {
+	for (int i = 0; i < 16; i++) {
+		ds.active_array[i] = 0;
+		ds.id_array[i] = i;
+	}
+}
+
+int dm_get_id(char * a, char * b) {
+	for (int i = 0; i < 16; i++) {
+		if ((!strcmp(a, ds.login_array[i][0]) || !strcmp(a, ds.login_array[i][1])) &&
+		     (!strcmp(b, ds.login_array[i][0]) || !strcmp(b, ds.login_array[i][1])) &&
+		     (ds.active_array[i] == 1)) return i;
+	}
+	return -1;
+}
+
+int dm_activate(char * a, char * b) {
+	for (int i = 0; i < 16; i++) {
+		if (!ds.active_array[i]) {
+			ds.active_array[i] = 1;
+			strcpy(ds.login_array[i][0], a);
+			strcpy(ds.login_array[i][1], b);
+			return i;
+		}
+	}
+}
+
 void check_semi(FILE * in) {
 	char semi[1];
 	fscanf(in, "%s", semi);
@@ -175,7 +204,7 @@ int establish_logged_users_nr(User * users, int user_nr) {
 
 int who_is_that(User * users, int user_nr, char * nick) {
 	for (int i = 0; i < user_nr; i++) {
-		if (strcmp(users[i].login, nick)) return i;
+		if (!strcmp(users[i].login, nick)) return i;
 	}
 	return -1;
 }
@@ -184,6 +213,7 @@ void handle_req_dm(User * users, int user_nr) {
 	Req req;
 	int local_request_queue = msgget(0x100, 0600);
 	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 8, IPC_NOWAIT);
+	printf("%s %s %d\n", req.login, req.password, req.type);
 	Resp resp;
 	if (!req.wanna_dm) resp.code = -1;
 	if (receive_code != -1) {
@@ -193,8 +223,13 @@ void handle_req_dm(User * users, int user_nr) {
 		if (message_to_id != -1) {
 			//defining pair of users that are going to dm
 			strcpy(resp.strings[0], req.login);
+			//printf("%s %s\n", resp.strings[0], req.login);
 			strcpy(resp.strings[1], users[message_to_id].login);
+			//resp.ints[0] = dm_get_id(resp.strings[0], resp.strings[1]);
 			resp.code = 0;
+			//activate dm connection in dm struct
+			resp.ints[0] = dm_activate(resp.strings[0], resp.strings[1]);
+			//printf("%s %s\n", resp.strings[0], resp.strings[1]);
 			//turning is_writing flag to 1 in both users
 			users[message_to_id].is_writing = 1;
 			users[who_is_that(users, user_nr, req.login)].is_writing = 1;

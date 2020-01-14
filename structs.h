@@ -57,6 +57,7 @@ typedef struct Dm Dm;
 struct Dm_list {
 	char login_array[16][2][256];
 	int active_array[16];
+	int id_array[16];
 };
 
 typedef struct Dm_list Dm_list;

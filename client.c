@@ -24,6 +24,7 @@ int main() {
 
 	req_login(login, password);
 	
+	printf("%s\n", login);
 	char interact[1024];
 	strcpy(interact, "");
 	int is_dming = 0;
