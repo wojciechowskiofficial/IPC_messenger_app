@@ -104,4 +104,13 @@ void dm_mode() {
 	printf("were in dm mode\n");
 }
 
+void handle_resp_dm(char * login, char * password) {
+	int mid = msgget(0x100, 0);
+
+	Resp resp;
+	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 7, IPC_NOWAIT);
+
+	printf("%d\n", resp.code);
+}
+
 #endif
