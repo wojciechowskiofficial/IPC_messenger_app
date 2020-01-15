@@ -13,7 +13,7 @@ int queues[3];
 #include "structs.h"
 
 int main() {
-	printf("server up\n");
+	printf("server up\n\n");
 	User users[256];
 	Group groups[256];
 	int user_nr, group_nr;

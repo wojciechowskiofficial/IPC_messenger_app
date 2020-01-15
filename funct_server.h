@@ -10,14 +10,19 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+Dm_list ds;
+
 void catch_sigint(int sig) {
 	for (int i = 0; i < 3; i++) {
 		msgctl(queues[i], IPC_RMID, NULL);
 	}
+	for (int i = 0; i < 16; i++) {
+		if (ds.active_array[i]) {
+			msgctl(ds.mid_array[i], IPC_RMID, NULL);
+		}
+	}
 	exit(EXIT_SUCCESS);
 }
-
-Dm_list ds;
 
 void dm_init() {
 	for (int i = 0; i < 16; i++) {
@@ -227,21 +232,24 @@ void handle_req_dm(User * users, int user_nr) {
 			//resp.ints[0] = dm_get_id(resp.strings[0], resp.strings[1]);
 			resp.code = 0;
 			//activate dm connection in dm struct
-			resp.ints[0] = dm_activate(resp.strings[0], resp.strings[1]);
+			int ds_connection_iter = dm_activate(resp.strings[0], resp.strings[1]);
+			resp.ints[0] = ds_connection_iter;
 			//printf("%s %s\n", resp.strings[0], resp.strings[1]);
 			//turning is_writing flag to 1 in both users
 			users[message_to_id].is_writing = 1;
 			users[who_is_that(users, user_nr, req.login)].is_writing = 1;
+			//creating dm queue
+			ds.mid_array[ds_connection_iter] = msgget(0x200 + ds_connection_iter, 0600 | IPC_CREAT);
 			//establish logged users number
 			int nr = establish_logged_users_nr(users, user_nr);
-			printf("!@#$%^&*\n");
-			printf("dm req successful\n");
-			printf("login: %s\n", req.login);
-			printf("password: %s\n\n", req.password);
 			//send x messages where x is logged users number
 			for (int i = 0; i < nr; i++) {
 				msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
 			}
+			printf("!@#$%^&*\n");
+			printf("dm req successful\n");
+			printf("login: %s\n", req.login);
+			printf("password: %s\n\n", req.password);
 		}
 		if (resp.code != 0) {
 			printf("!@#$%^&*\n");
