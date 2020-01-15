@@ -36,10 +36,6 @@ int main() {
 		handle_logout(users, user_nr);
 		handle_req_logged(users, user_nr);
 		handle_req_dm(users, user_nr);
-		for (int i = 0; i < user_nr; i++) {
-			printf("%s %d %d\n", users[i].login, users[i].is_logged, users[i].is_writing);
-		}
-		printf("%s %s\n", ds.login_array[1][0], ds.login_array[1][1]);
 		sleep(1);
 	}
 

@@ -27,7 +27,9 @@ int main() {
 	printf("%s\n", login);
 	char interact[1024];
 	strcpy(interact, "");
-	int is_dming = 0;
+	Current_connection * curr_conn;
+	curr_conn = (Current_connection *)malloc(sizeof(Current_connection));
+	curr_conn->is_dming = 0;
 
 	present_options();
 
@@ -70,7 +72,9 @@ int main() {
 		}
 		//synchronous section
 		//frequency ~ 1Hz
-		handle_resp_dm(login, password);
+		if (curr_conn->is_dming == 0) {
+			handle_resp_dm(login, password, curr_conn);
+		}
 		
 	}
 	return 0;

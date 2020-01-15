@@ -96,24 +96,30 @@ void req_dm(char * login, char * password, char * message_to) {
 	strcpy(req.message_to, message_to);
 	req.wanna_dm = 1;
 
-	printf("%s\n", req.login);
-
 	msgsnd(mid, &req, sizeof(req) - sizeof(long), 0);
 	sleep(1);
 }
 
-void dm_mode() {
-	printf("were in dm mode\n");
-}
-
-void handle_resp_dm(char * login, char * password) {
+void handle_resp_dm(char * login, char * password, Current_connection * curr_conn) {
 	int mid = msgget(0x100, 0);
 
 	Resp resp;
 	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 7, IPC_NOWAIT);
 
-	if(resp.type == 7) {
-		printf("%s %s %d\n", resp.strings[0], resp.strings[1], resp.ints[0]);
+	strcpy(curr_conn->introvert, resp.strings[1]);
+	strcpy(curr_conn->extrovert, resp.strings[0]);
+
+	if (resp.type == 7) {
+		if (!strcmp(curr_conn->extrovert, login)) {
+			printf("message from: server\n");
+			printf("dm connection with %s established successfuly\n\n", curr_conn->introvert);
+			curr_conn->is_dming = 1;
+		}
+		if (!strcmp(curr_conn->introvert, login)) {
+			printf("message from: server\n");
+			printf("dm connection with %s established successfuly\n\n", curr_conn->extrovert);
+			curr_conn->is_dming = 1;
+		}
 	}
 }
 

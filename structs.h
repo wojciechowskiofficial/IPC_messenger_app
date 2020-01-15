@@ -62,4 +62,11 @@ struct Dm_list {
 
 typedef struct Dm_list Dm_list;
 
+struct Current_connection {
+	char introvert[256], extrovert[256];
+	int id, is_dming;
+};
+
+typedef struct Current_connection Current_connection;
+
 #endif

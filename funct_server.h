@@ -213,7 +213,6 @@ void handle_req_dm(User * users, int user_nr) {
 	Req req;
 	int local_request_queue = msgget(0x100, 0600);
 	int receive_code = msgrcv(local_request_queue, &req, sizeof(req) - sizeof(long), 8, IPC_NOWAIT);
-	printf("%s %s %d\n", req.login, req.password, req.type);
 	Resp resp;
 	if (!req.wanna_dm) resp.code = -1;
 	if (receive_code != -1) {
