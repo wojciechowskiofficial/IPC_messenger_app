@@ -39,6 +39,7 @@ void present_options() {
 	printf("$ + *enter* + quit + *enter*\tquit command mode\n");
 	printf("$ + *enter* + logout + *enter*\tlogout\n");
 	printf("$ + *enter* + dm + *enter*\tenter dming mode\n");
+	printf("$ + *enter* + write_dm + *enter*\twrite direct message\n");
 	printf("$ + *enter* + request_logged + *enter*\n\n");
 }
 
@@ -106,6 +107,9 @@ void handle_resp_dm(char * login, char * password, Current_connection * curr_con
 	Resp resp;
 	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 7, IPC_NOWAIT);
 
+	//condition prevents processing dm resps
+	if (curr_conn->is_dming) return;
+
 	strcpy(curr_conn->introvert, resp.strings[1]);
 	strcpy(curr_conn->extrovert, resp.strings[0]);
 
@@ -126,6 +130,24 @@ void handle_resp_dm(char * login, char * password, Current_connection * curr_con
 			curr_conn->mid = msgget(0x200 + curr_conn->id, 0600);
 		}
 	}
+}
+
+void write_dm(char * login, char * password, Current_connection * curr_conn) {
+	int mid = curr_conn->mid;
+
+	printf("write your message down below (enters are forbidden):\n");
+	char text[max_message_size];
+	scanf("%s", text);
+
+	Dm dm;
+	dm.type = 21;
+	dm.is_read = 0;
+	strcpy(dm.introvert, curr_conn->introvert);
+	strcpy(dm.extrovert, curr_conn->extrovert);
+	strcpy(dm.text, text);
+
+	msgsnd(mid, &dm, sizeof(dm) - sizeof(long), 0);
+	sleep(1);
 }
 
 #endif

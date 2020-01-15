@@ -9,3 +9,6 @@ queue 0x100:
 	6: cli req request_logged
 	7: ser resp request_dm
 	8: cli req request_dm
+queues 0x20[0;f]:
+	21: cli dm sent
+	22: cli dm received

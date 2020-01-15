@@ -37,6 +37,8 @@ int main() {
 		handle_req_logged(users, user_nr);
 		handle_req_dm(users, user_nr);
 		sleep(1);
+		handle_traffic(users, user_nr);
+		sleep(1);
 	}
 
 	return 0;

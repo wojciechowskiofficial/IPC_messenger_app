@@ -259,4 +259,17 @@ void handle_req_dm(User * users, int user_nr) {
 		}
 	}
 }
+
+void handle_traffic(User * users, int user_nr) {
+	Dm dm;
+	for (int i = 0; i < 16; i++) {
+		if (ds.active_array[i]) {
+			int receive_code = msgrcv(ds.mid_array[i], &dm, sizeof(dm) - sizeof(long), 21, IPC_NOWAIT);
+			if (!dm.is_read) {
+				printf("i %d %s %s\n", i, dm.introvert, dm.text);
+			}
+		}
+	}
+}
+
 #endif

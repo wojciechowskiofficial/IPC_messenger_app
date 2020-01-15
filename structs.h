@@ -45,13 +45,6 @@ struct Req {
 
 typedef struct Req Req;
 
-struct Dm {
-	long type;
-	char text[max_message_size];
-};
-
-typedef struct Dm Dm;
-
 //Dm_list is a local servers data structure
 //not ment for ipc
 struct Dm_list {
@@ -75,5 +68,14 @@ struct Current_connection {
 };
 
 typedef struct Current_connection Current_connection;
+
+struct Dm {
+	long type;
+	char introvert[256], extrovert[256];
+	char text[max_message_size];
+	int is_read;
+};
+
+typedef struct Dm Dm;
 
 #endif

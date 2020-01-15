@@ -62,6 +62,9 @@ int main() {
 					scanf("%s", message_to);
 					req_dm(login, password, message_to);
 				}
+				else if (!strcmp(interact, "write_dm")) {
+					write_dm(login, password, curr_conn);
+				}
 				else if (!strcmp(interact, "")) {
 
 				}
@@ -72,11 +75,7 @@ int main() {
 		}
 		//synchronous section
 		//frequency ~ 1Hz
-		if (curr_conn->is_dming == 0) {
-			handle_resp_dm(login, password, curr_conn);
-			printf("%d\n", curr_conn->mid);
-		}
-		
+		handle_resp_dm(login, password, curr_conn);
 	}
 	return 0;
 }
