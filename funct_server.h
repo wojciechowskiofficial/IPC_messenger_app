@@ -282,6 +282,7 @@ void handle_traffic(User * users, int user_nr) {
 				in_dm.is_read = 1;
 				//change out_dm fields
 				out_dm.type = 22;
+				out_dm.is_read = 0;
 				msgsnd(ds.mid_array[i], &out_dm, sizeof(out_dm) - sizeof(long), 0);
 				msgsnd(ds.mid_array[i], &out_dm, sizeof(out_dm) - sizeof(long), 0);
 				printf("!@#$%^&*\n");

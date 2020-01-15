@@ -159,4 +159,21 @@ void write_dm(char * login, char * password, Current_connection * curr_conn) {
 	sleep(1);
 }
 
+void handle_traffic(char * login, char * password, Current_connection * curr_conn) {
+	if (!curr_conn->is_dming) return;
+
+	int mid = curr_conn->mid;
+
+	printf("mid %d\n", curr_conn->mid);
+
+	Dm dm;
+
+	int receive_code = msgrcv(mid, &dm, sizeof(dm) - sizeof(long), 22, IPC_NOWAIT);
+
+	printf("%d\n", receive_code);
+	if (!dm.is_read && dm.type == 22) {
+		printf("%s\n", dm.text);
+		dm.is_read = 1;
+	}
+}
 #endif

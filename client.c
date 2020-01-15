@@ -76,6 +76,7 @@ int main() {
 		//synchronous section
 		//frequency ~ 1Hz
 		handle_resp_dm(login, password, curr_conn);
+		handle_traffic(login, password, curr_conn);
 	}
 	return 0;
 }
