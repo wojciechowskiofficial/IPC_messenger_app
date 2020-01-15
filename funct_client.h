@@ -142,8 +142,17 @@ void write_dm(char * login, char * password, Current_connection * curr_conn) {
 	Dm dm;
 	dm.type = 21;
 	dm.is_read = 0;
+	//establishing intro/extrovert 
 	strcpy(dm.introvert, curr_conn->introvert);
 	strcpy(dm.extrovert, curr_conn->extrovert);
+	//establishing from/to
+	strcpy(dm.from, login);
+	if (!strcmp(curr_conn->introvert, login)) {
+		strcpy(dm.to, curr_conn->extrovert);
+	}
+	else {
+		strcpy(dm.to, curr_conn->introvert);
+	}
 	strcpy(dm.text, text);
 
 	msgsnd(mid, &dm, sizeof(dm) - sizeof(long), 0);

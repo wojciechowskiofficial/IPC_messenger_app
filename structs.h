@@ -72,6 +72,7 @@ typedef struct Current_connection Current_connection;
 struct Dm {
 	long type;
 	char introvert[256], extrovert[256];
+	char from[256], to[256];
 	char text[max_message_size];
 	int is_read;
 };

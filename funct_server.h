@@ -260,13 +260,38 @@ void handle_req_dm(User * users, int user_nr) {
 	}
 }
 
+Dm cp_dm(Dm in_dm) {
+	Dm out_dm;
+	out_dm.type = in_dm.type;
+	strcpy(out_dm.introvert, in_dm.introvert);
+	strcpy(out_dm.extrovert, in_dm.extrovert);
+	strcpy(out_dm.text, in_dm.text);
+	out_dm.is_read = in_dm.is_read;
+	return out_dm;
+}
+
 void handle_traffic(User * users, int user_nr) {
-	Dm dm;
+	Dm in_dm;
 	for (int i = 0; i < 16; i++) {
 		if (ds.active_array[i]) {
-			int receive_code = msgrcv(ds.mid_array[i], &dm, sizeof(dm) - sizeof(long), 21, IPC_NOWAIT);
-			if (!dm.is_read) {
-				printf("i %d %s %s\n", i, dm.introvert, dm.text);
+			int receive_code = msgrcv(ds.mid_array[i], &in_dm, sizeof(in_dm) - sizeof(long), 21, IPC_NOWAIT);
+			if (!in_dm.is_read && in_dm.type == 21) {
+				//copy received in_dm to out_dm
+				Dm out_dm = cp_dm(in_dm);
+				//change in_dm fields
+				in_dm.is_read = 1;
+				//change out_dm fields
+				out_dm.type = 22;
+				msgsnd(ds.mid_array[i], &out_dm, sizeof(out_dm) - sizeof(long), 0);
+				msgsnd(ds.mid_array[i], &out_dm, sizeof(out_dm) - sizeof(long), 0);
+				printf("!@#$%^&*\n");
+				printf("dm propagation successful\n");
+				//getting users password
+				char tmp_password[256];
+				strcpy(tmp_password, users[who_is_that(users, user_nr, in_dm.from)].password);
+				printf("login: %s\n", in_dm.from);
+				printf("password: %s\n\n", tmp_password);
+
 			}
 		}
 	}
