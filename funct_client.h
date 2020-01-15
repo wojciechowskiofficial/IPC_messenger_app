@@ -114,11 +114,16 @@ void handle_resp_dm(char * login, char * password, Current_connection * curr_con
 			printf("message from: server\n");
 			printf("dm connection with %s established successfuly\n\n", curr_conn->introvert);
 			curr_conn->is_dming = 1;
+			curr_conn->id = resp.ints[0];
+			curr_conn->mid = msgget(0x200 + curr_conn->id, 0600);
+
 		}
 		if (!strcmp(curr_conn->introvert, login)) {
 			printf("message from: server\n");
 			printf("dm connection with %s established successfuly\n\n", curr_conn->extrovert);
 			curr_conn->is_dming = 1;
+			curr_conn->id = resp.ints[0];
+			curr_conn->mid = msgget(0x200 + curr_conn->id, 0600);
 		}
 	}
 }

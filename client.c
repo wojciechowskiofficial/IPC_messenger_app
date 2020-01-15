@@ -74,6 +74,7 @@ int main() {
 		//frequency ~ 1Hz
 		if (curr_conn->is_dming == 0) {
 			handle_resp_dm(login, password, curr_conn);
+			printf("%d\n", curr_conn->mid);
 		}
 		
 	}

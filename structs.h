@@ -65,7 +65,13 @@ typedef struct Dm_list Dm_list;
 
 struct Current_connection {
 	char introvert[256], extrovert[256];
-	int id, is_dming;
+	//id is a number from range [0;16) and is an unique connection id.
+	//private dm queues mid is constructed as follows:
+	//mid = 0x200 + id;
+	int id;
+	//the actual mid
+	int mid;
+	int is_dming;
 };
 
 typedef struct Current_connection Current_connection;
