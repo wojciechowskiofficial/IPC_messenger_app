@@ -265,6 +265,8 @@ Dm cp_dm(Dm in_dm) {
 	out_dm.type = in_dm.type;
 	strcpy(out_dm.introvert, in_dm.introvert);
 	strcpy(out_dm.extrovert, in_dm.extrovert);
+	strcpy(out_dm.from, in_dm.from);
+	strcpy(out_dm.to, in_dm.to);
 	strcpy(out_dm.text, in_dm.text);
 	out_dm.is_read = in_dm.is_read;
 	return out_dm;

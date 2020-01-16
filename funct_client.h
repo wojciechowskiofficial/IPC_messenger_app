@@ -164,15 +164,20 @@ void handle_traffic(char * login, char * password, Current_connection * curr_con
 
 	int mid = curr_conn->mid;
 
-	printf("mid %d\n", curr_conn->mid);
-
 	Dm dm;
 
 	int receive_code = msgrcv(mid, &dm, sizeof(dm) - sizeof(long), 22, IPC_NOWAIT);
 
-	printf("%d\n", receive_code);
 	if (!dm.is_read && dm.type == 22) {
-		printf("%s\n", dm.text);
+		printf("%s %s\n", login, dm.from);
+		if (!strcmp(login, dm.from)) {
+			printf("message from: server\n");
+			printf("message delivered\n\n");
+		}
+		else {
+			printf("message from %s\n", dm.from);
+			printf("%s\n\n", dm.text);
+		}
 		dm.is_read = 1;
 	}
 }
