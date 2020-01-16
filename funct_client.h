@@ -150,6 +150,7 @@ void write_dm(char * login, char * password, Current_connection * curr_conn) {
 	printf("write your message down below (enters are forbidden):\n");
 	char text[max_message_size];
 	scanf("%s", text);
+	printf("\n");
 
 	Dm dm;
 	dm.type = 21;
@@ -186,7 +187,7 @@ void handle_traffic(char * login, char * password, Current_connection * curr_con
 			printf("message delivered\n\n");
 		}
 		else {
-			printf("message from %s\n", dm.from);
+			printf("message from: %s\n", dm.from);
 			printf("%s\n\n", dm.text);
 		}
 		dm.is_read = 1;
@@ -215,8 +216,7 @@ void terminate_dm(char * login, char * password, Current_connection * curr_conn)
 void handle_terminate_dm(char * login, char * password, Current_connection * curr_conn) {
 	//if (curr_conn->is_dming) return;
 
-	//int mid = curr_conn->mid;
-	int mid = msgget(0x200, 0);
+	int mid = curr_conn->mid;
 
 	Dm dm;
 

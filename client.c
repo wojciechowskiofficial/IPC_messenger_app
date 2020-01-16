@@ -5,6 +5,7 @@
 #include <sys/msg.h>
 #include <sys/ipc.h>
 #include <poll.h>
+#include <signal.h>
 
 #include "structs.h"
 #include "funct_client.h"
@@ -12,8 +13,24 @@
 int id;
 char login[256];
 char password[256];
+Current_connection * curr_conn;
+int is_logged;
+
+void catch_sigint(int sig) {
+	if (curr_conn->is_dming) {
+		terminate_dm(login, password, curr_conn);
+		Dm dm;
+		sleep(1);
+		msgrcv(curr_conn->mid, &dm, sizeof(dm) - sizeof(long), 24, IPC_NOWAIT);
+	}
+	if (is_logged) {
+		req_logout(login, password, curr_conn);	
+	}
+
+}
 
 int main() {
+	is_logged = 0;
 	printf("welcome to the lowest level chat the world has ever got addicted to!!!\n");
 	printf("please login\n");
 	printf("login: ");
@@ -23,14 +40,17 @@ int main() {
 	printf("\n");
 
 	req_login(login, password);
+	is_logged = 1;
 	
 	char interact[1024];
 	strcpy(interact, "");
-	Current_connection * curr_conn;
 	curr_conn = (Current_connection *)malloc(sizeof(Current_connection));
 	curr_conn->is_dming = 0;
 	//to prevent collision since id range from 0 to 15 inclusive
 	curr_conn->id = -1;
+
+	//catch sig_int
+	signal(2, catch_sigint);
 
 	present_options();
 
