@@ -17,9 +17,8 @@ void catch_sigint(int sig) {
 		msgctl(queues[i], IPC_RMID, NULL);
 	}
 	for (int i = 0; i < 16; i++) {
-		if (ds.active_array[i]) {
-			msgctl(ds.mid_array[i], IPC_RMID, NULL);
-		}
+		int mid = msgget(0x200 + i, 0);
+		msgctl(mid, IPC_RMID, NULL);
 	}
 	exit(EXIT_SUCCESS);
 }
@@ -252,6 +251,7 @@ void handle_req_dm(User * users, int user_nr) {
 			printf("password: %s\n\n", req.password);
 		}
 		if (resp.code != 0) {
+			msgsnd(local_request_queue, &resp, sizeof(Resp) - sizeof(long), 0);
 			printf("!@#$%^&*\n");
 			printf("dm req failed\n");
 			printf("login: %s\n", req.login);
@@ -315,6 +315,8 @@ void handle_req_dm_termination(User * users, int user_nr) {
 				strcpy(out_dm.from, in_dm.from);
 				int tmp_mid = ds.mid_array[in_dm.id_to_terminate];
 				//performing dm_termination actions on ds
+				users[who_is_that(users, user_nr, out_dm.introvert)].is_writing = 0;
+				users[who_is_that(users, user_nr, out_dm.extrovert)].is_writing = 0;
 				ds.active_array[in_dm.id_to_terminate] = 0;
 				ds.mid_array[in_dm.id_to_terminate] = -1;
 				strcpy(ds.login_array[in_dm.id_to_terminate][0], "");

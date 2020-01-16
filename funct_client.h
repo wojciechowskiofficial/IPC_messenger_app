@@ -42,9 +42,15 @@ void present_options() {
 	printf("$ + *enter* + write_dm + *enter*\twrite direct message\n");
 	printf("$ + *enter* + terminate_dm + *enter*\tquit dm mode\n");
 	printf("$ + *enter* + request_logged + *enter*\trequest list of logged users\n\n");
+	printf("PLEASE DO NOT USE COMMANDS {LOGOUT, ESTABLISH_DM, REQUEST_LOGGED} WHILE IN DM MODE\n");
+	printf("EXIT DM MODE BY USING TERMINATE_DM COMMAND FIRST. REQUEST WILL NOT BE SENT TO SERVER OTHERWISE\n\n");
 }
 
-void req_logout(char * login, char * password) {
+void req_logout(char * login, char * password, Current_connection * curr_conn) {
+	if (curr_conn->is_dming) {
+		printf("please terminate dm connection using command *terminate_dm* before you logout\n\n");
+		return;
+	}
 	int mid = msgget(0x100, 0);
 	
 	Req req;
@@ -106,10 +112,15 @@ void handle_resp_dm(char * login, char * password, Current_connection * curr_con
 	int mid = msgget(0x100, 0);
 
 	Resp resp;
-	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 7, IPC_NOWAIT);
-
+	int receive_code = msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 7, IPC_NOWAIT);
+	
 	//condition prevents processing dm resps
-	if (curr_conn->is_dming) return;
+	if (curr_conn->is_dming || receive_code == -1) return;
+
+	if (resp.code != 0) {
+		printf("message from: server\n");
+		printf("establishing dm connection failed\n\n");
+	}
 
 	strcpy(curr_conn->introvert, resp.strings[1]);
 	strcpy(curr_conn->extrovert, resp.strings[0]);
@@ -202,23 +213,25 @@ void terminate_dm(char * login, char * password, Current_connection * curr_conn)
 }
 
 void handle_terminate_dm(char * login, char * password, Current_connection * curr_conn) {
-	if (curr_conn->is_dming) return;
+	//if (curr_conn->is_dming) return;
 
-	int mid = curr_conn->mid;
+	//int mid = curr_conn->mid;
+	int mid = msgget(0x200, 0);
 
 	Dm dm;
 
-	int receive_code = msgrcv(mid, &dm, sizeof(dm) - sizeof(long), 244, IPC_NOWAIT);
-	printf("wchodze\n");
+	int receive_code = msgrcv(mid, &dm, sizeof(dm) - sizeof(long), 24, IPC_NOWAIT);
 
-	if (!dm.is_read && dm.type == 24) {
+	if (receive_code != -1 && dm.type == 24) {
 		printf("message from: server\n");
 		printf("DM CONNECTION TERMINATED\n\n");
 		dm.is_read = 1;
 		if (!strcmp(dm.introvert, login)) {
+			sleep(1);
 			msgctl(mid, IPC_RMID, NULL);
 		}
 		curr_conn->mid = -1;
+		curr_conn->is_dming = 0;
 	}
 
 }

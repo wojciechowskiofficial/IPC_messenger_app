@@ -24,7 +24,6 @@ int main() {
 
 	req_login(login, password);
 	
-	printf("%s\n", login);
 	char interact[1024];
 	strcpy(interact, "");
 	Current_connection * curr_conn;
@@ -52,28 +51,29 @@ int main() {
 				else if (!strcmp(interact, "help")) {
 					present_options();
 				}
-				else if (!strcmp(interact, "logout")) {
-					req_logout(login, password);	
+				else if (!curr_conn->is_dming && !strcmp(interact, "logout")) {
+					req_logout(login, password, curr_conn);	
 				}
-				else if (!strcmp(interact, "request_logged")) {
+				else if (!curr_conn->is_dming && !strcmp(interact, "request_logged")) {
 					req_logged(login, password);
 				}
-				else if (!strcmp(interact, "establish_dm")) {
+				else if (!curr_conn->is_dming && !strcmp(interact, "establish_dm")) {
 					printf("establish connection with: ");
 					char message_to[256];
 					scanf("%s", message_to);
-					req_dm(login, password, message_to);
+					if (!strcmp(message_to, login)) {
+						printf("please do not write to yourself. it's irrational. go out or get some help...\n");
+					}
+					else {
+						req_dm(login, password, message_to);
+					}
+					printf("\n");
 				}
 				else if (!strcmp(interact, "write_dm")) {
 					write_dm(login, password, curr_conn);
 				}
 				else if (!strcmp(interact, "terminate_dm")) {
-					//if (!curr_conn->is_dming) {
-					//	printf("not in dm mode\n\n");
-					//}
-					//else {
 						terminate_dm(login, password, curr_conn);
-					//}
 				}
 				else if (!strcmp(interact, "")) {
 
@@ -88,7 +88,6 @@ int main() {
 		handle_resp_dm(login, password, curr_conn);
 		handle_traffic(login, password, curr_conn);
 		handle_terminate_dm(login, password, curr_conn);
-		printf("is dming %d\n", curr_conn->is_dming);
 	}
 	return 0;
 }
