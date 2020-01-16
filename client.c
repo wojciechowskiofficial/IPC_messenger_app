@@ -22,6 +22,8 @@ void catch_sigint(int sig) {
 		Dm dm;
 		sleep(1);
 		msgrcv(curr_conn->mid, &dm, sizeof(dm) - sizeof(long), 24, IPC_NOWAIT);
+		sleep(1);
+		msgctl(curr_conn->mid, IPC_RMID, NULL);
 	}
 	if (is_logged) {
 		req_logout(login, password, curr_conn);	
