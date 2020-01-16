@@ -34,13 +34,14 @@ void req_login(char * login, char * password) {
 
 void present_options() {
 	printf("chat manual\n\n");
-	printf("$ + *enter*\t\t\tenter command mode\n");
-	printf("$ + *enter* + help + *enter*\tprint help\n");
-	printf("$ + *enter* + quit + *enter*\tquit command mode\n");
-	printf("$ + *enter* + logout + *enter*\tlogout\n");
-	printf("$ + *enter* + dm + *enter*\tenter dming mode\n");
+	printf("$ + *enter*\t\t\t\tenter command mode\n");
+	printf("$ + *enter* + help + *enter*\t\tprint help\n");
+	printf("$ + *enter* + quit + *enter*\t\tquit command mode\n");
+	printf("$ + *enter* + logout + *enter*\t\tlogout\n");
+	printf("$ + *enter* + establish_dm + *enter*\tenter dming mode\n");
 	printf("$ + *enter* + write_dm + *enter*\twrite direct message\n");
-	printf("$ + *enter* + request_logged + *enter*\n\n");
+	printf("$ + *enter* + terminate_dm + *enter*\tquit dm mode\n");
+	printf("$ + *enter* + request_logged + *enter*\trequest list of logged users\n\n");
 }
 
 void req_logout(char * login, char * password) {
@@ -169,7 +170,6 @@ void handle_traffic(char * login, char * password, Current_connection * curr_con
 	int receive_code = msgrcv(mid, &dm, sizeof(dm) - sizeof(long), 22, IPC_NOWAIT);
 
 	if (!dm.is_read && dm.type == 22) {
-		printf("%s %s\n", login, dm.from);
 		if (!strcmp(login, dm.from)) {
 			printf("message from: server\n");
 			printf("message delivered\n\n");
@@ -181,4 +181,46 @@ void handle_traffic(char * login, char * password, Current_connection * curr_con
 		dm.is_read = 1;
 	}
 }
+
+void terminate_dm(char * login, char * password, Current_connection * curr_conn) {
+	int mid = curr_conn->mid;
+	Dm dm;
+	dm.type = 23;
+	dm.is_read = 0;
+	dm.id_to_terminate = curr_conn->id;
+
+	strcpy(dm.from, login);
+	strcpy(dm.introvert, curr_conn->introvert);
+	strcpy(dm.extrovert, curr_conn->extrovert);
+
+	strcpy(curr_conn->introvert, "");
+	strcpy(curr_conn->extrovert, "");
+	curr_conn->id = 0;
+	curr_conn->is_dming = 0;
+	
+	msgsnd(mid, &dm, sizeof(dm) - sizeof(long), 0);
+}
+
+void handle_terminate_dm(char * login, char * password, Current_connection * curr_conn) {
+	if (curr_conn->is_dming) return;
+
+	int mid = curr_conn->mid;
+
+	Dm dm;
+
+	int receive_code = msgrcv(mid, &dm, sizeof(dm) - sizeof(long), 244, IPC_NOWAIT);
+	printf("wchodze\n");
+
+	if (!dm.is_read && dm.type == 24) {
+		printf("message from: server\n");
+		printf("DM CONNECTION TERMINATED\n\n");
+		dm.is_read = 1;
+		if (!strcmp(dm.introvert, login)) {
+			msgctl(mid, IPC_RMID, NULL);
+		}
+		curr_conn->mid = -1;
+	}
+
+}
+
 #endif

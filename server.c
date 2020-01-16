@@ -38,7 +38,11 @@ int main() {
 		handle_req_dm(users, user_nr);
 		sleep(1);
 		handle_traffic(users, user_nr);
+		handle_req_dm_termination(users, user_nr);
 		sleep(1);
+		for (int i = 0; i < 16; i++) {
+			printf("id %d active %d\n", ds.id_array[i], ds.active_array[i]);
+		}
 	}
 
 	return 0;

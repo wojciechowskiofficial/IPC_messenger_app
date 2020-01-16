@@ -12,3 +12,5 @@ queue 0x100:
 queues 0x20[0;f]:
 	21: cli dm sent
 	22: cli dm received
+	23: cli req terminate
+	24: ser resp terminate

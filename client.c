@@ -30,6 +30,8 @@ int main() {
 	Current_connection * curr_conn;
 	curr_conn = (Current_connection *)malloc(sizeof(Current_connection));
 	curr_conn->is_dming = 0;
+	//to prevent collision since id range from 0 to 15 inclusive
+	curr_conn->id = -1;
 
 	present_options();
 
@@ -56,7 +58,7 @@ int main() {
 				else if (!strcmp(interact, "request_logged")) {
 					req_logged(login, password);
 				}
-				else if (!strcmp(interact, "dm")) {
+				else if (!strcmp(interact, "establish_dm")) {
 					printf("establish connection with: ");
 					char message_to[256];
 					scanf("%s", message_to);
@@ -64,6 +66,14 @@ int main() {
 				}
 				else if (!strcmp(interact, "write_dm")) {
 					write_dm(login, password, curr_conn);
+				}
+				else if (!strcmp(interact, "terminate_dm")) {
+					//if (!curr_conn->is_dming) {
+					//	printf("not in dm mode\n\n");
+					//}
+					//else {
+						terminate_dm(login, password, curr_conn);
+					//}
 				}
 				else if (!strcmp(interact, "")) {
 
@@ -77,6 +87,8 @@ int main() {
 		//frequency ~ 1Hz
 		handle_resp_dm(login, password, curr_conn);
 		handle_traffic(login, password, curr_conn);
+		handle_terminate_dm(login, password, curr_conn);
+		printf("is dming %d\n", curr_conn->is_dming);
 	}
 	return 0;
 }

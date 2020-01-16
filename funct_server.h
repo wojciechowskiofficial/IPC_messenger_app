@@ -300,4 +300,40 @@ void handle_traffic(User * users, int user_nr) {
 	}
 }
 
+void handle_req_dm_termination(User * users, int user_nr) {
+	Dm in_dm;
+	for (int i = 0; i < 16; i++) {
+		if (ds.active_array[i]) {
+			int receive_code = msgrcv(ds.mid_array[i], &in_dm, sizeof(in_dm) - sizeof(long), 23, IPC_NOWAIT);
+			if (!in_dm.is_read && in_dm.type == 23 && i == in_dm.id_to_terminate) {
+				//creating out_dm
+				Dm out_dm;
+				out_dm.type = 24;
+				out_dm.is_read = 0;
+				strcpy(out_dm.introvert, in_dm.introvert);
+				strcpy(out_dm.extrovert, in_dm.extrovert);
+				strcpy(out_dm.from, in_dm.from);
+				int tmp_mid = ds.mid_array[in_dm.id_to_terminate];
+				//performing dm_termination actions on ds
+				ds.active_array[in_dm.id_to_terminate] = 0;
+				ds.mid_array[in_dm.id_to_terminate] = -1;
+				strcpy(ds.login_array[in_dm.id_to_terminate][0], "");
+				strcpy(ds.login_array[in_dm.id_to_terminate][1], "");
+				in_dm.is_read = 1;
+				//responding to both clients
+				msgsnd(tmp_mid, &out_dm, sizeof(out_dm) - sizeof(long), 0);
+				msgsnd(tmp_mid, &out_dm, sizeof(out_dm) - sizeof(long), 0);
+				//server print message
+				printf("!@#$%^&*\n");
+				printf("dm termination successful\n");
+				//getting users password
+				char tmp_password[256];
+				strcpy(tmp_password, users[who_is_that(users, user_nr, out_dm.from)].password);
+				printf("login: %s\n", out_dm.from);
+				printf("password: %s\n\n", tmp_password);
+			}
+		}
+	}
+}
+
 #endif

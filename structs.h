@@ -75,6 +75,7 @@ struct Dm {
 	char from[256], to[256];
 	char text[max_message_size];
 	int is_read;
+	int id_to_terminate;
 };
 
 typedef struct Dm Dm;
