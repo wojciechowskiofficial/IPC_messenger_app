@@ -7,8 +7,8 @@
 #include <poll.h>
 #include <signal.h>
 
-#include "structs.h"
-#include "funct_client.h"
+#include "inf136376_structs.h"
+#include "inf136376_funct_client.h"
 
 int id;
 char login[256];

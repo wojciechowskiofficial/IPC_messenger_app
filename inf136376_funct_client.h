@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "structs.h"
+#include "inf136376_structs.h"
 
 #ifndef FUNCT_CLIENT_H
 #define FUNCT_CLIENT_H
@@ -23,7 +23,7 @@ void req_login(char * login, char * password) {
 
 	Resp resp;
 	msgrcv(mid, &resp, sizeof(resp) - sizeof(long), 1, 0);
-	if (!resp.code) {
+	if (resp.code) {
 		printf("login successful!!!\n\n");
 	}
 	else {

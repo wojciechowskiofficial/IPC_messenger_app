@@ -1,4 +1,4 @@
-#include "structs.h"
+#include "inf136376_structs.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -113,7 +113,7 @@ void handle_login(User * users, int user_nr) {
 			if (!strcmp(users[i].login, req.login) &&
 			    !strcmp(users[i].password, req.password) &&
 			    !users[i].is_logged) {
-				resp.code = 0;
+				resp.code = 1;
 				users[i].is_logged = 1;
 				printf("!@#$%^&*\n");
 				printf("login successful\n");
@@ -122,7 +122,7 @@ void handle_login(User * users, int user_nr) {
 				break;
 			}
 		}
-		if (resp.code != 0) {
+		if (resp.code != 1) {
 				printf("!@#$%^&*\n");
 				printf("login failed\n");
 				printf("login: %s\n", req.login);

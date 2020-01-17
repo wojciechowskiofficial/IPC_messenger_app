@@ -1,5 +1,13 @@
 PROTOCOL
 
+scheme
+
+queue *key*:
+	*message.type*: description
+	*message.type*: description
+	...
+	*message.type*: description
+
 queue 0x100:
 	1: serv resp login
 	2: cli req login
@@ -9,8 +17,22 @@ queue 0x100:
 	6: cli req request_logged
 	7: ser resp request_dm
 	8: cli req request_dm
-queues 0x20[0;f]:
+queues 0x20[0;0xf]:
 	21: cli dm sent
 	22: cli dm received
 	23: cli req terminate
 	24: ser resp terminate
+
+0x100.1 and 0x100.2: client requests login. sends struct Req with its login and password (type 2). server handles request and responds to client by sending struct Req with *code* (type 1). *code* == 1 means login was successful, fail otherwise.
+
+0x100.3 and 0x100.4: client requests logout. sends struct Req with its login and password (type 4). server handles request and responds to client by sending struct Req with *code* (type 3). *code* == 0 means logout was successful, fail otherwise.
+
+0x100.5 and 0x100.6: client requests list of logged users. sends struct Req with its login and password (type 6). server handles request and responds to client by sending struct Req list of logged users (type 5).
+
+0x100.7 and 0x100.8: client requests dm connection. sends struct Req with its login, password and message_to variable (type 8). server handles request and responds to client by sending struct Req with *code* (type 7). *code* == 0 means dm connection was successful, fail otherwise.
+
+*******************
+
+0x20[0;0xf].21 and 0x20[0;0xf].22: client requests sending a message. sends struct Dm with is_read flag initially set to 0, introvert (addressee user nick), extrovert (sending user nick), from (as name suggests), to (as name suggests), text (actual message body) (type 21). such message is received and handled by server. then it is propagated to both clients using their own dedicated private direct message queue. server sends struct Dm with is_read flag set to 0, and the rest of the incoming dm fields are copied and propagated back to clients. both clients receive message propagated by server and sender recognizes *Dm.from* field and treats it as server response while addressee recognizes sender and receives message as it is to show it to user.
+
+0x20[0;0xf].23 and 0x20[0;0xf].24: client requests direct message connection termination. sends struct Dm with is_read flag initially set to 0, introvert, extrovert, *id_to_terminate* (backend connection array index in servers data structure), from (type 23). server handles request and responds to clients by sending struct Dm with *code* (type 24) and the rest of the incoming dm fields are copied. client then handles direct message connection termination and and introvert client removes private direct message queue from the system.

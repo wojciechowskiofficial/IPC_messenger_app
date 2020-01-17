@@ -9,8 +9,8 @@
 int request_queue, receive_queue, send_queue;
 int queues[3];
 
-#include "funct_server.h"
-#include "structs.h"
+#include "inf136376_funct_server.h"
+#include "inf136376_structs.h"
 
 int main() {
 	printf("server up\n\n");
